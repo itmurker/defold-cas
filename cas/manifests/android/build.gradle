@@ -6,10 +6,6 @@ repositories {
     maven { url = "https://android-sdk.is.com/" } // IronSource
     {{/cas.ironsource_android}}
 
-    {{#cas.superawesome_android}}
-    maven { url = "https://aa-sdk.s3-eu-west-1.amazonaws.com/android_repo" } // SuperAwesome
-    {{/cas.superawesome_android}}
-
     {{#cas.mintegral_android}}
     maven { url = "https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_oversea" } // Mintegral
     {{/cas.mintegral_android}}
@@ -18,9 +14,27 @@ repositories {
     maven { url = "https://artifact.bytedance.com/repository/pangle" } // Pangle
     {{/cas.pangle_android}}
 
+    {{#cas.superawesome_android}}
+    maven { url = "https://aa-sdk.s3-eu-west-1.amazonaws.com/android_repo" } // SuperAwesome
+    {{/cas.superawesome_android}}
+
     {{#cas.charboost_android}}
     maven { url = "https://cboost.jfrog.io/artifactory/chartboost-ads/" } // Chartboost
     {{/cas.charboost_android}}
+
+    // BETA
+
+    {{#cas.ogury_android}}
+    maven { url = "https://maven.ogury.co" } // Ogury
+    {{/cas.ogury_android}}
+
+    {{#cas.loopme_android}}
+    maven { url = "https://jitpack.io" } // LoopMe
+    {{/cas.loopme_android}}
+
+    {{#cas.madex_android}}
+    maven { url = "https://sdkpkg.sspnet.tech" } // Madex
+    {{/cas.madex_android}}
 
     {{#cas.smaato_android}}
     maven { url = "https://s3.amazonaws.com/smaato-sdk-releases/" } // Smaato
@@ -30,75 +44,89 @@ repositories {
 dependencies {
     implementation("com.cleveradssolutions:cas-sdk:3.9.10")
 
-    {{#cas.adcolony_android}}
-    implementation("com.cleveradssolutions:adcolony:4.8.0.14")     // AdColony
-    {{/cas.adcolony_android}}
+    {{#cas.casexchange_android}}
+    implementation("com.cleveradssolutions:cas-exchange:3.9.10")  // CASExchange
+    {{/cas.casexchange_android}}
 
     {{#cas.ironsource_android}}
-    implementation("com.cleveradssolutions:ironsource:7.7.0.0")   // IronSource
+    implementation("com.cleveradssolutions:ironsource:8.7.0.0")   // IronSource
     {{/cas.ironsource_android}}
-
-    {{#cas.admob_android}}
+    
+    {{#cas.google_android}}
     implementation("com.cleveradssolutions:google:23.6.0.0")      // Google Ads | Admob
-    {{/cas.admob_android}}
-
-    {{#cas.unityads_android}}
-    implementation("com.cleveradssolutions:unity:4.9.2.2")        // Unity Ads
-    {{/cas.unityads_android}}
-
-    {{#cas.liftoff_android}}
-    implementation("com.cleveradssolutions:vungle:7.1.0.0")       // LiftoffMonetize
-    {{/cas.liftoff_android}}
-
-    {{#cas.charboost_android}}
-    implementation("com.cleveradssolutions:chartboost:9.6.0.0")   // Chartboost
-    {{/cas.charboost_android}}
-
-    {{#cas.fyber_android}}
-    implementation("com.cleveradssolutions:fyber:8.2.5.0")        // DT Exchange
-    {{/cas.fyber_android}}
-
-    {{#cas.mintegral_android}}
-    implementation("com.cleveradssolutions:mintegral:16.5.91.0")  // Mintegral
-    {{/cas.mintegral_android}}
-
-    {{#cas.applovin_android}}
-    implementation("com.cleveradssolutions:applovin:13.0.1.0")    // AppLovin
-    {{/cas.applovin_android}}
-
-    {{#cas.facebook_android}}
-    implementation("com.cleveradssolutions:facebook:6.16.0.1")    // Meta Audience Network
-    {{/cas.facebook_android}}
-
-    {{#cas.pangle_android}}
-    implementation("com.cleveradssolutions:pangle:5.7.0.2")       // Pangle
-    {{/cas.pangle_android}}
-
-    {{#cas.bigo_android}}
-    implementation("com.cleveradssolutions:bigo:4.4.0.0")         // Bigo
-    {{/cas.bigo_android}}
-
-    {{#cas.yandex_android}}
-    implementation("com.cleveradssolutions:yandex:26.3.0.0")      // Yandex Ads
-    {{/cas.yandex_android}}
-
-    {{#cas.hyprmx_android}}
-    implementation("com.cleveradssolutions:hyprmx:6.2.3.0")       // HyprMX
-    {{/cas.hyprmx_android}}
+    {{/cas.google_android}}
+    
+    {{#cas.unity_android}}
+    implementation("com.cleveradssolutions:unity:4.13.2.0")       // Unity Ads
+    {{/cas.unity_android}}
 
     {{#cas.kidoz_android}}
     implementation("com.cleveradssolutions:kidoz:9.1.2.0")        // Kidoz
     {{/cas.kidoz_android}}
-
+    
     {{#cas.superawesome_android}}
-    implementation("com.cleveradssolutions:superawesome:9.3.0.0") // SuperAwesome
+    implementation("com.cleveradssolutions:superawesome:9.4.0.0") // SuperAwesome
     {{/cas.superawesome_android}}
 
+    {{#cas.vungle_android}}
+    implementation("com.cleveradssolutions:vungle:7.4.3.0")       // LiftoffMonetize
+    {{/cas.vungle_android}}
+    
     {{#cas.inmobi_android}}
-    //implementation("com.cleveradssolutions:inmobi:10.6.2.1")      // InMobi // Crashing
+    implementation("com.cleveradssolutions:inmobi:10.8.0.0")      // InMobi
     {{/cas.inmobi_android}}
+    
+    {{#cas.chartboost_android}}
+    implementation("com.cleveradssolutions:chartboost:9.8.3.0")   // Chartboost
+    {{/cas.chartboost_android}}
+    
+    {{#cas.fyber_android}}
+    implementation("com.cleveradssolutions:fyber:8.3.6.0")        // DT Exchange 
+    {{/cas.fyber_android}}
 
-    {{#cas.mytarget_android}}
-    implementation("com.cleveradssolutions:mytarget:5.20.0.1")    // MyTarget
-    {{/cas.mytarget_android}}
+    {{#cas.mintegral_android}}
+    implementation("com.cleveradssolutions:mintegral:16.9.51.0")  // Mintegral
+    {{/cas.mintegral_android}}
+
+    {{#cas.applovin_android}}
+    implementation("com.cleveradssolutions:applovin:13.1.0.0")    // AppLovin
+    {{/cas.applovin_android}}
+    
+    {{#cas.facebook_android}}
+    implementation("com.cleveradssolutions:facebook:6.19.0.0")    // Meta Audience Network
+    {{/cas.facebook_android}}
+    
+    {{#cas.pangle_android}}
+    implementation("com.cleveradssolutions:pangle:6.5.0.4")       // Pangle
+    {{/cas.pangle_android}}
+
+    {{#cas.yandex_android}}
+    implementation("com.cleveradssolutions:yandex:27.9.0.0")      // Yandex Ads
+    {{/cas.yandex_android}}
+    
+    {{#cas.bigo_android}}
+    implementation("com.cleveradssolutions:bigo:5.1.0.0")         // Bigo
+    {{/cas.bigo_android}}
+    
+    {{#cas.startio_android}}
+    implementation("com.cleveradssolutions:startio:5.1.0.0")      // StartIO
+    {{/cas.startio_android}}
+
+    {{#cas.hyprmx_android}}
+    implementation("com.cleveradssolutions:hyprmx:6.4.2.0")       // HyprMX
+    {{/cas.hyprmx_android}}
+
+    // BETA
+
+    {{#cas.ogury_android}}
+    implementation("com.cleveradssolutions:ogury:5.8.0.0")        // Ogury
+    {{/cas.ogury_android}}
+
+    {{#cas.madex_android}}
+    implementation("com.cleveradssolutions:madex:1.6.0.0")        // Madex
+    {{/cas.madex_android}}
+    
+    {{#cas.smaato_android}}
+    implementation("com.cleveradssolutions:smaato:22.7.1.0")      // Smaato
+    {{/cas.smaato_android}}
 }

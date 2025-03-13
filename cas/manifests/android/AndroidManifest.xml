@@ -6,9 +6,9 @@
         {{/cas.facebook_android}}
     >
 
-        {{#cas.admob_android}}
-        <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="{{cas.admob_android_app_id}}"/>
-        {{/cas.admob_android}}
+        {{#cas.google_android}}
+        <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="{{cas.google_android_app_id}}"/>
+        {{/cas.google_android}}
 
     </application>
 </manifest>
