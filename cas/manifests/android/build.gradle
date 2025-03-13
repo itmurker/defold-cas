@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.cleveradssolutions:cas-sdk:3.5.2")
+    implementation("com.cleveradssolutions:cas-sdk:3.9.10")
 
     {{#cas.adcolony_android}}
     implementation("com.cleveradssolutions:adcolony:4.8.0.14")     // AdColony
