@@ -183,7 +183,7 @@ public class Extension {
                         .withAdTypes(ad_types.toArray(new AdType[0]))
                         // Use Test ads or live ads
                         .withTestAdMode(is_test)
-                        .initialize(activity);
+                        .build(activity);
 				manager.getOnAdLoadEvent().add(adLoadCallback);
             }
         });
