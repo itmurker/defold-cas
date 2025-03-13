@@ -144,51 +144,56 @@ public class Extension {
 		activity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				if (test_device != null) {
-					CAS.getSettings().setTestDeviceIDs(new HashSet<>(Arrays.asList(test_device)));
-				}
-				if (is_debug) {
-					CAS.getSettings().setDebugMode(true);
-				}
-				ArrayList<AdType> ad_types = new ArrayList<AdType>();
-				if (!disable_banner) {
-					ad_types.add(AdType.Banner);
-				}
-				if (!disable_interstitial) {
-					ad_types.add(AdType.Interstitial);
-				}
-				if (!disable_rewarded) {
-					ad_types.add(AdType.Rewarded);
-				}
-				manager = CAS.buildManager()
-					// Set your CAS ID
-					.withCasId(id)
-					.withCompletionListener(config -> {
-						String initErrorOrNull = config.getError();
-						String userCountryISO2OrNull = config.getCountryCode();
-						boolean protectionApplied = config.isConsentRequired();
-						MediationManager manager = config.getManager();
+				try {
+					if (test_device != null) {
+						CAS.getSettings().setTestDeviceIDs(new HashSet<>(Arrays.asList(test_device)));
+					}
+					if (is_debug) {
+						CAS.getSettings().setDebugMode(true);
+					}
+					ArrayList<AdType> ad_types = new ArrayList<AdType>();
+					if (!disable_banner) {
+						ad_types.add(AdType.Banner);
+					}
+					if (!disable_interstitial) {
+						ad_types.add(AdType.Interstitial);
+					}
+					if (!disable_rewarded) {
+						ad_types.add(AdType.Rewarded);
+					}
+					manager = CAS.buildManager()
+							// Set your CAS ID
+							.withCasId(id)
+							.withCompletionListener(config -> {
+								String initErrorOrNull = config.getError();
+								String userCountryISO2OrNull = config.getCountryCode();
+								boolean protectionApplied = config.isConsentRequired();
+								MediationManager manager = config.getManager();
 
-						Hashtable<Object, Object> event = Utils.new_event();
-						event.put("phase", LuaConsts.INIT.ordinal());
-						event.put("type", LuaConsts.INIT.ordinal());
-						event.put("protection_applied", protectionApplied);
-						if (userCountryISO2OrNull != null) {
-							event.put("user_country_iso2O", userCountryISO2OrNull);
-						}
-						if (initErrorOrNull != null) {
-							event.put("error", initErrorOrNull);
-						} else {
-							is_initialized = true;
-						}
-						Utils.dispatch_event(script_listener, event);
-					})
-					// List Ad formats used in app
-					.withAdTypes(ad_types.toArray(new AdType[0]))
-					// Use Test ads or live ads
-					.withTestAdMode(is_test)
-					.initialize(activity);
-				manager.getOnAdLoadEvent().add(adLoadCallback);
+								Hashtable<Object, Object> event = Utils.new_event();
+								event.put("phase", LuaConsts.INIT.ordinal());
+								event.put("type", LuaConsts.INIT.ordinal());
+								event.put("protection_applied", protectionApplied);
+								if (userCountryISO2OrNull != null) {
+									event.put("user_country_iso2O", userCountryISO2OrNull);
+								}
+								if (initErrorOrNull != null) {
+									event.put("error", initErrorOrNull);
+								} else {
+									is_initialized = true;
+								}
+								Utils.dispatch_event(script_listener, event);
+							})
+							// List Ad formats used in app
+							.withAdTypes(ad_types.toArray(new AdType[0]))
+							// Use Test ads or live ads
+							.withTestAdMode(is_test)
+							.initialize(activity);
+					manager.getOnAdLoadEvent().add(adLoadCallback);
+				} catch (Exception e) {
+					Utils.debug_log("CAS INIT ERROR");
+					Utils.debug_log(e.getMessage());
+				}
 			}
 		});
 
