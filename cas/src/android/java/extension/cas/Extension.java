@@ -2,19 +2,12 @@ package extension.cas;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.GregorianCalendar;
 import java.util.Hashtable;
 import java.util.HashSet;
 
 import android.app.Activity;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.location.Location;
-import android.os.Bundle;
-import android.view.Gravity;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -164,31 +157,31 @@ public class Extension {
 						// Set your CAS ID
 						.withCasId(id)
 						.withCompletionListener(config -> {
-							String initErrorOrNull = config.getError();
-							String userCountryISO2OrNull = config.getCountryCode();
-							boolean protectionApplied = config.isConsentRequired();
-							MediationManager manager = config.getManager();
-
-							Hashtable<Object, Object> event = Utils.new_event();
-							event.put("phase", LuaConsts.INIT.ordinal());
-							event.put("type", LuaConsts.INIT.ordinal());
-							event.put("protection_applied", protectionApplied);
-							if (userCountryISO2OrNull != null) {
-								event.put("user_country_iso2O", userCountryISO2OrNull);
-							}
-							if (initErrorOrNull != null) {
-								event.put("error", initErrorOrNull);
-							} else {
-								is_initialized = true;
-							}
-							Utils.dispatch_event(script_listener, event);
+//							String initErrorOrNull = config.getError();
+//							String userCountryISO2OrNull = config.getCountryCode();
+//							boolean protectionApplied = config.isConsentRequired();
+//							MediationManager manager = config.getManager();
+//
+//							Hashtable<Object, Object> event = Utils.new_event();
+//							event.put("phase", LuaConsts.INIT.ordinal());
+//							event.put("type", LuaConsts.INIT.ordinal());
+//							event.put("protection_applied", protectionApplied);
+//							if (userCountryISO2OrNull != null) {
+//								event.put("user_country_iso2O", userCountryISO2OrNull);
+//							}
+//							if (initErrorOrNull != null) {
+//								event.put("error", initErrorOrNull);
+//							} else {
+//								is_initialized = true;
+//							}
+//							Utils.dispatch_event(script_listener, event);
 						})
 						// List Ad formats used in app
 						.withAdTypes(ad_types.toArray(new AdType[0]))
 						// Use Test ads or live ads
 						.withTestAdMode(is_test)
 						.initialize(activity);
-				manager.getOnAdLoadEvent().add(adLoadCallback);
+//				manager.getOnAdLoadEvent().add(adLoadCallback);
 			}
 		});
 
