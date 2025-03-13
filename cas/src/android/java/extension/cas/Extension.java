@@ -187,7 +187,7 @@ public class Extension {
                         // Use Test ads or live ads
                         .withTestAdMode(is_test)
                         .initialize(activity);
-//				manager.getOnAdLoadEvent().add(adLoadCallback);
+				manager.getOnAdLoadEvent().add(adLoadCallback);
             }
         });
 
