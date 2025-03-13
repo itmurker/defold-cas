@@ -160,27 +160,24 @@ public class Extension {
                         // Set your CAS ID
                         .withCasId(id)
                         .withCompletionListener(config -> {
-                            if (config.getError() != null) {
-                                Utils.log(config.getError());
-                            }
-//							String initErrorOrNull = config.getError();
-//							String userCountryISO2OrNull = config.getCountryCode();
-//							boolean protectionApplied = config.isConsentRequired();
-//							MediationManager manager = config.getManager();
-//
-//							Hashtable<Object, Object> event = Utils.new_event();
-//							event.put("phase", LuaConsts.INIT.ordinal());
-//							event.put("type", LuaConsts.INIT.ordinal());
-//							event.put("protection_applied", protectionApplied);
-//							if (userCountryISO2OrNull != null) {
-//								event.put("user_country_iso2O", userCountryISO2OrNull);
-//							}
-//							if (initErrorOrNull != null) {
-//								event.put("error", initErrorOrNull);
-//							} else {
-//								is_initialized = true;
-//							}
-//							Utils.dispatch_event(script_listener, event);
+							String initErrorOrNull = config.getError();
+							String userCountryISO2OrNull = config.getCountryCode();
+							boolean protectionApplied = config.isConsentRequired();
+							MediationManager manager = config.getManager();
+
+							Hashtable<Object, Object> event = Utils.new_event();
+							event.put("phase", LuaConsts.INIT.ordinal());
+							event.put("type", LuaConsts.INIT.ordinal());
+							event.put("protection_applied", protectionApplied);
+							if (userCountryISO2OrNull != null) {
+								event.put("user_country_iso2O", userCountryISO2OrNull);
+							}
+							if (initErrorOrNull != null) {
+								event.put("error", initErrorOrNull);
+							} else {
+								is_initialized = true;
+							}
+							Utils.dispatch_event(script_listener, event);
                         })
                         // List Ad formats used in app
                         .withAdTypes(ad_types.toArray(new AdType[0]))
@@ -208,7 +205,7 @@ public class Extension {
 
     // cas.load(type)
     private int load(long L) {
-        Utils.debug_log("is_loaded()");
+        Utils.debug_log("loaded()");
         Utils.check_arg_count(L, 1);
 
         if (!check_is_initialized())
