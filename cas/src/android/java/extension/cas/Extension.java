@@ -107,29 +107,29 @@ public class Extension {
 		}
 	}
 
-	//region Lua functions
+	// region Lua functions
 
 	// cas.init(params)
 	private int init(long L) {
 		Utils.debug_log("init()");
 		Utils.check_arg_count(L, 1);
 		Scheme scheme = new Scheme()
-			.string("id")
-			.bool("disable_banner")
-			.bool("disable_interstitial")
-			.bool("disable_rewarded")
-			//.bool("manual_loading")
-			.string("test_device")
-			.bool("test")
-			.bool("debug")
-			.function("listener");
+				.string("id")
+				.bool("disable_banner")
+				.bool("disable_interstitial")
+				.bool("disable_rewarded")
+				// .bool("manual_loading")
+				.string("test_device")
+				.bool("test")
+				.bool("debug")
+				.function("listener");
 
 		Table params = new Table(L, 1).parse(scheme);
 		String id = params.get_string_not_null("id");
 		boolean disable_banner = params.get_boolean("disable_banner", false);
 		boolean disable_interstitial = params.get_boolean("disable_interstitial", false);
 		boolean disable_rewarded = params.get_boolean("disable_rewarded", false);
-		//boolean is_manual_loading = params.get_boolean("manual_loading", false);
+		// boolean is_manual_loading = params.get_boolean("manual_loading", false);
 		String test_device = params.get_string("test_device");
 		boolean is_test = params.get_boolean("test", false);
 		boolean is_debug = params.get_boolean("debug", false);
@@ -144,56 +144,51 @@ public class Extension {
 		activity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				try {
-					if (test_device != null) {
-						CAS.getSettings().setTestDeviceIDs(new HashSet<>(Arrays.asList(test_device)));
-					}
-					if (is_debug) {
-						CAS.getSettings().setDebugMode(true);
-					}
-					ArrayList<AdType> ad_types = new ArrayList<AdType>();
-					if (!disable_banner) {
-						ad_types.add(AdType.Banner);
-					}
-					if (!disable_interstitial) {
-						ad_types.add(AdType.Interstitial);
-					}
-					if (!disable_rewarded) {
-						ad_types.add(AdType.Rewarded);
-					}
-					manager = CAS.buildManager()
-							// Set your CAS ID
-							.withCasId(id)
-							.withCompletionListener(config -> {
-								String initErrorOrNull = config.getError();
-								String userCountryISO2OrNull = config.getCountryCode();
-								boolean protectionApplied = config.isConsentRequired();
-								MediationManager manager = config.getManager();
-
-								Hashtable<Object, Object> event = Utils.new_event();
-								event.put("phase", LuaConsts.INIT.ordinal());
-								event.put("type", LuaConsts.INIT.ordinal());
-								event.put("protection_applied", protectionApplied);
-								if (userCountryISO2OrNull != null) {
-									event.put("user_country_iso2O", userCountryISO2OrNull);
-								}
-								if (initErrorOrNull != null) {
-									event.put("error", initErrorOrNull);
-								} else {
-									is_initialized = true;
-								}
-								Utils.dispatch_event(script_listener, event);
-							})
-							// List Ad formats used in app
-							.withAdTypes(ad_types.toArray(new AdType[0]))
-							// Use Test ads or live ads
-							.withTestAdMode(is_test)
-							.initialize(activity);
-					manager.getOnAdLoadEvent().add(adLoadCallback);
-				} catch (Exception e) {
-					Utils.debug_log("CAS INIT ERROR");
-					Utils.debug_log(e.getMessage());
+				if (test_device != null) {
+					CAS.getSettings().setTestDeviceIDs(new HashSet<>(Arrays.asList(test_device)));
 				}
+				if (is_debug) {
+					CAS.getSettings().setDebugMode(true);
+				}
+				ArrayList<AdType> ad_types = new ArrayList<AdType>();
+				if (!disable_banner) {
+					ad_types.add(AdType.Banner);
+				}
+				if (!disable_interstitial) {
+					ad_types.add(AdType.Interstitial);
+				}
+				if (!disable_rewarded) {
+					ad_types.add(AdType.Rewarded);
+				}
+				manager = CAS.buildManager()
+						// Set your CAS ID
+						.withCasId(id)
+						.withCompletionListener(config -> {
+							String initErrorOrNull = config.getError();
+							String userCountryISO2OrNull = config.getCountryCode();
+							boolean protectionApplied = config.isConsentRequired();
+							MediationManager manager = config.getManager();
+
+							Hashtable<Object, Object> event = Utils.new_event();
+							event.put("phase", LuaConsts.INIT.ordinal());
+							event.put("type", LuaConsts.INIT.ordinal());
+							event.put("protection_applied", protectionApplied);
+							if (userCountryISO2OrNull != null) {
+								event.put("user_country_iso2O", userCountryISO2OrNull);
+							}
+							if (initErrorOrNull != null) {
+								event.put("error", initErrorOrNull);
+							} else {
+								is_initialized = true;
+							}
+							Utils.dispatch_event(script_listener, event);
+						})
+						// List Ad formats used in app
+						.withAdTypes(ad_types.toArray(new AdType[0]))
+						// Use Test ads or live ads
+						.withTestAdMode(is_test)
+						.initialize(activity);
+				manager.getOnAdLoadEvent().add(adLoadCallback);
 			}
 		});
 
@@ -217,10 +212,12 @@ public class Extension {
 		Utils.debug_log("is_loaded()");
 		Utils.check_arg_count(L, 1);
 
-		if (!check_is_initialized()) return 0;
-		if (Lua.type(L, 1) != Lua.Type.NUMBER) return 0;
+		if (!check_is_initialized())
+			return 0;
+		if (Lua.type(L, 1) != Lua.Type.NUMBER)
+			return 0;
 
-		final int type = (int)Lua.tonumber(L, 1);
+		final int type = (int) Lua.tonumber(L, 1);
 
 		if (type == LuaConsts.INTERSTITIAL.ordinal()) {
 			manager.loadInterstitial();
@@ -237,10 +234,12 @@ public class Extension {
 		Utils.debug_log("is_loaded()");
 		Utils.check_arg_count(L, 1);
 
-		if (!check_is_initialized()) return 0;
-		if (Lua.type(L, 1) != Lua.Type.NUMBER) return 0;
+		if (!check_is_initialized())
+			return 0;
+		if (Lua.type(L, 1) != Lua.Type.NUMBER)
+			return 0;
 
-		final int type = (int)Lua.tonumber(L, 1);
+		final int type = (int) Lua.tonumber(L, 1);
 
 		if (type == LuaConsts.INTERSTITIAL.ordinal()) {
 			Lua.pushboolean(L, manager.isInterstitialReady());
@@ -261,10 +260,12 @@ public class Extension {
 		Utils.debug_log("show()");
 		Utils.check_arg_count(L, 1);
 
-		if (!check_is_initialized()) return 0;
-		if (Lua.type(L, 1) != Lua.Type.NUMBER) return 0;
+		if (!check_is_initialized())
+			return 0;
+		if (Lua.type(L, 1) != Lua.Type.NUMBER)
+			return 0;
 
-		final int type = (int)Lua.tonumber(L, 1);
+		final int type = (int) Lua.tonumber(L, 1);
 
 		activity.runOnUiThread(new Runnable() {
 			@Override
@@ -286,18 +287,21 @@ public class Extension {
 	private int hide_banner(long L) {
 		Utils.debug_log("hide_banner()");
 		Utils.check_arg_count(L, 0);
-		if (!check_is_initialized()) return 0;
+		if (!check_is_initialized())
+			return 0;
 		activity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				/*if (banner != null) {
-					banner.destroy();
-					banner = null;
-				}
-				if (popup != null) {
-					popup.dismiss();
-					popup = null;
-				}*/
+				/*
+				 * if (banner != null) {
+				 * banner.destroy();
+				 * banner = null;
+				 * }
+				 * if (popup != null) {
+				 * popup.dismiss();
+				 * popup = null;
+				 * }
+				 */
 			}
 		});
 		return 0;
@@ -308,16 +312,18 @@ public class Extension {
 		Utils.check_arg_count(L, 2);
 		final int param_index = 1;
 		final int value_index = 2;
-		if (Lua.type(L, param_index) != Lua.Type.NUMBER) return 0;
-		final int param = (int)Lua.tonumber(L, param_index);
+		if (Lua.type(L, param_index) != Lua.Type.NUMBER)
+			return 0;
+		final int param = (int) Lua.tonumber(L, param_index);
 
 		if (param == LuaConsts.TAGGED_AUDIENCE.ordinal()
-		|| param == LuaConsts.USER_CONSENT.ordinal()
-		|| param == LuaConsts.CCPA.ordinal()
-		|| param == LuaConsts.TARGETING_AGE.ordinal()
-		|| param == LuaConsts.TARGETING_GENDER.ordinal()) {
-			if (Lua.type(L, value_index) != Lua.Type.NUMBER) return 0;
-			final int value = (int)Lua.tonumber(L, value_index);
+				|| param == LuaConsts.USER_CONSENT.ordinal()
+				|| param == LuaConsts.CCPA.ordinal()
+				|| param == LuaConsts.TARGETING_AGE.ordinal()
+				|| param == LuaConsts.TARGETING_GENDER.ordinal()) {
+			if (Lua.type(L, value_index) != Lua.Type.NUMBER)
+				return 0;
+			final int value = (int) Lua.tonumber(L, value_index);
 
 			if (param == LuaConsts.TAGGED_AUDIENCE.ordinal()) {
 				if (value == LuaConsts.AUDIENCE_CHILDREN.ordinal()) {
@@ -349,13 +355,15 @@ public class Extension {
 				CAS.getTargetingOptions().setAge(value);
 			}
 		} else if (param == LuaConsts.MUTED_AD_SOUNDS.ordinal()) {
-			if (Lua.type(L, value_index) != Lua.Type.BOOLEAN) return 0;
+			if (Lua.type(L, value_index) != Lua.Type.BOOLEAN)
+				return 0;
 			final boolean value = Lua.toboolean(L, value_index);
 			CAS.getSettings().setMutedAdSounds(value);
 		} else if (param == LuaConsts.TARGETING_KEYWORDS.ordinal()) {
-			if (Lua.type(L, value_index) != Lua.Type.TABLE) return 0;
+			if (Lua.type(L, value_index) != Lua.Type.TABLE)
+				return 0;
 			HashSet<String> keywords = new HashSet<String>();
-			final int array_length = (int)Lua.objlen(L, value_index);
+			final int array_length = (int) Lua.objlen(L, value_index);
 			for (int i = 1; i <= array_length; ++i) {
 				Lua.rawget(L, value_index, i);
 				if (Lua.type(L, -1) == Lua.Type.STRING) {
@@ -367,9 +375,9 @@ public class Extension {
 		}
 		return 0;
 	}
-	//endregion
+	// endregion
 
-	//region Callbacks
+	// region Callbacks
 	private void dispatch_event(LuaConsts phase, LuaConsts event_type) {
 		Hashtable<Object, Object> event = Utils.new_event();
 		event.put("phase", phase.ordinal());
@@ -462,5 +470,5 @@ public class Extension {
 			dispatch_event(LuaConsts.CLOSED, LuaConsts.REWARDED);
 		}
 	};
-	//endregion
+	// endregion
 }
