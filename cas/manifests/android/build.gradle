@@ -39,7 +39,7 @@ dependencies {
     {{/cas.ironsource_android}}
 
     {{#cas.admob_android}}
-    implementation("com.cleveradssolutions:google:22.6.0.0")      // Google Ads | Admob
+    implementation("com.cleveradssolutions:google:23.6.0.0")      // Google Ads | Admob
     {{/cas.admob_android}}
 
     {{#cas.unityads_android}}
