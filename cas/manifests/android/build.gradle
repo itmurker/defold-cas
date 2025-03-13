@@ -87,7 +87,7 @@ dependencies {
     {{/cas.hyprmx_android}}
 
     {{#cas.kidoz_android}}
-    implementation("com.cleveradssolutions:kidoz:9.0.2.0")        // Kidoz
+    implementation("com.cleveradssolutions:kidoz:9.1.2.0")        // Kidoz
     {{/cas.kidoz_android}}
 
     {{#cas.superawesome_android}}
