@@ -63,7 +63,7 @@ dependencies {
     {{/cas.mintegral_android}}
 
     {{#cas.applovin_android}}
-    implementation("com.cleveradssolutions:applovin:12.1.0.0")    // AppLovin
+    implementation("com.cleveradssolutions:applovin:13.0.1.0")    // AppLovin
     {{/cas.applovin_android}}
 
     {{#cas.facebook_android}}
