@@ -99,6 +99,9 @@
   - name: CLOSED
     type: number
 
+  - name: AD_REVENUE_PAID
+    type: number
+
   - name: TAGGED_AUDIENCE
     type: number
 

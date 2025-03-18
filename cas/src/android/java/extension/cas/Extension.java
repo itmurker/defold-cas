@@ -42,6 +42,7 @@ public class Extension {
         CLICKED,
         COMPLETE,
         CLOSED,
+        AD_REVENUE_PAID,
 
         TAGGED_AUDIENCE,
         AUDIENCE_CHILDREN,
@@ -160,31 +161,31 @@ public class Extension {
                         // Set your CAS ID
                         .withCasId(id)
                         .withCompletionListener(config -> {
-							String initErrorOrNull = config.getError();
-							String userCountryISO2OrNull = config.getCountryCode();
-							boolean protectionApplied = config.isConsentRequired();
-							MediationManager manager = config.getManager();
+                            String initErrorOrNull = config.getError();
+                            String userCountryISO2OrNull = config.getCountryCode();
+                            boolean protectionApplied = config.isConsentRequired();
+                            MediationManager manager = config.getManager();
 
-							Hashtable<Object, Object> event = Utils.new_event();
-							event.put("phase", LuaConsts.INIT.ordinal());
-							event.put("type", LuaConsts.INIT.ordinal());
-							event.put("protection_applied", protectionApplied);
-							if (userCountryISO2OrNull != null) {
-								event.put("user_country_iso2O", userCountryISO2OrNull);
-							}
-							if (initErrorOrNull != null) {
-								event.put("error", initErrorOrNull);
-							} else {
-								is_initialized = true;
-							}
-							Utils.dispatch_event(script_listener, event);
+                            Hashtable<Object, Object> event = Utils.new_event();
+                            event.put("phase", LuaConsts.INIT.ordinal());
+                            event.put("type", LuaConsts.INIT.ordinal());
+                            event.put("protection_applied", protectionApplied);
+                            if (userCountryISO2OrNull != null) {
+                                event.put("user_country_iso2O", userCountryISO2OrNull);
+                            }
+                            if (initErrorOrNull != null) {
+                                event.put("error", initErrorOrNull);
+                            } else {
+                                is_initialized = true;
+                            }
+                            Utils.dispatch_event(script_listener, event);
                         })
                         // List Ad formats used in app
                         .withAdTypes(ad_types.toArray(new AdType[0]))
                         // Use Test ads or live ads
                         .withTestAdMode(is_test)
                         .build(activity);
-				manager.getOnAdLoadEvent().add(adLoadCallback);
+                manager.getOnAdLoadEvent().add(adLoadCallback);
             }
         });
 
@@ -254,24 +255,27 @@ public class Extension {
     // cas.show(type)
     private int show(long L) {
         Utils.debug_log("show()");
-        Utils.check_arg_count(L, 1);
+        Utils.check_arg_count(L, 2);
 
         if (!check_is_initialized())
             return 0;
         if (Lua.type(L, 1) != Lua.Type.NUMBER)
             return 0;
+        if (Lua.type(L, 2) != Lua.Type.STRING)
+            return 0;
 
         final int type = (int) Lua.tonumber(L, 1);
+        final String placement = (String) Lua.tostring(L, 2);
 
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (type == LuaConsts.INTERSTITIAL.ordinal()) {
                     Utils.debug_log("show interstitial");
-                    manager.showInterstitial(activity, interstitialCallback);
+                    manager.showInterstitial(activity, new_ad_paid_callback(placement, LuaConsts.INTERSTITIAL));
                 } else if (type == LuaConsts.REWARDED.ordinal()) {
                     Utils.debug_log("show rewarded");
-                    manager.showRewardedAd(activity, rewardedCallback);
+                    manager.showInterstitial(activity, new_ad_paid_callback(placement, LuaConsts.REWARDED));
                 }
             }
         });
@@ -381,6 +385,67 @@ public class Extension {
         Utils.dispatch_event(script_listener, event);
     }
 
+    private Hashtable<Object, Object> new_event(LuaConsts phase, LuaConsts event_type) {
+        Hashtable<Object, Object> event = Utils.new_event();
+        event.put("phase", phase.ordinal());
+        event.put("type", event_type.ordinal());
+        return event;
+    }
+
+    private AdPaidCallback new_ad_paid_callback(String placement, LuaConsts ad_type){
+        return new AdPaidCallback() {
+            @Override
+            public void onShown(@NonNull AdStatusHandler ad) {
+                Hashtable<Object, Object> event = new_event(LuaConsts.SHOWN, ad_type);
+                event.put("placement", placement);
+                event.put("ad_network", ad.getNetwork());
+                event.put("ad_unit_id", ad.getIdentifier());
+                Utils.dispatch_event(script_listener, event);
+            }
+
+            @Override
+            public void onShowFailed(@NonNull String message) {
+                Hashtable<Object, Object> event = new_event(LuaConsts.FAILED, LuaConsts.REWARDED);
+                event.put("placement", placement);
+                event.put("error", message);
+                Utils.dispatch_event(script_listener, event);
+            }
+
+            @Override
+            public void onClicked() {
+                Hashtable<Object, Object> event = new_event(LuaConsts.CLICKED, LuaConsts.REWARDED);
+                event.put("placement", placement);
+                Utils.dispatch_event(script_listener, event);
+            }
+
+            @Override
+            public void onComplete() {
+                Hashtable<Object, Object> event = new_event(LuaConsts.COMPLETE, LuaConsts.REWARDED);
+                event.put("placement", placement);
+                Utils.dispatch_event(script_listener, event);
+            }
+
+            @Override
+            public void onClosed() {
+                Hashtable<Object, Object> event = new_event(LuaConsts.CLOSED, LuaConsts.REWARDED);
+                event.put("placement", placement);
+                Utils.dispatch_event(script_listener, event);
+            }
+
+            @Override
+            public void onAdRevenuePaid(@NonNull AdStatusHandler impression) {
+                Hashtable<Object, Object> event = new_event(LuaConsts.AD_REVENUE_PAID, LuaConsts.REWARDED);
+                event.put("placement", placement);
+                event.put("ad_network", impression.getNetwork());
+                event.put("ad_unit_id", impression.getIdentifier());
+                if (impression.getPriceAccuracy() != PriceAccuracy.UNDISCLOSED) {
+                    event.put("revenue", impression.getCpm() / 1000);
+                }
+                Utils.dispatch_event(script_listener, event);
+            }
+        };
+    }
+
     private AdLoadCallback adLoadCallback = new AdLoadCallback() {
         @Override
         public void onAdLoaded(@NonNull AdType type) {
@@ -410,60 +475,6 @@ public class Extension {
                     dispatch_event(LuaConsts.FAILED_TO_LOAD, LuaConsts.REWARDED);
                     break;
             }
-        }
-    };
-
-    private AdCallback interstitialCallback = new AdCallback() {
-        @Override
-        public void onShown(@NonNull AdStatusHandler ad) {
-            dispatch_event(LuaConsts.SHOWN, LuaConsts.INTERSTITIAL);
-        }
-
-        @Override
-        public void onShowFailed(@NonNull String message) {
-            dispatch_event(LuaConsts.FAILED, LuaConsts.INTERSTITIAL);
-        }
-
-        @Override
-        public void onClicked() {
-            dispatch_event(LuaConsts.CLICKED, LuaConsts.INTERSTITIAL);
-        }
-
-        @Override
-        public void onComplete() {
-            dispatch_event(LuaConsts.COMPLETE, LuaConsts.INTERSTITIAL);
-        }
-
-        @Override
-        public void onClosed() {
-            dispatch_event(LuaConsts.CLOSED, LuaConsts.INTERSTITIAL);
-        }
-    };
-
-    private AdCallback rewardedCallback = new AdCallback() {
-        @Override
-        public void onShown(@NonNull AdStatusHandler ad) {
-            dispatch_event(LuaConsts.SHOWN, LuaConsts.REWARDED);
-        }
-
-        @Override
-        public void onShowFailed(@NonNull String message) {
-            dispatch_event(LuaConsts.FAILED, LuaConsts.REWARDED);
-        }
-
-        @Override
-        public void onClicked() {
-            dispatch_event(LuaConsts.CLICKED, LuaConsts.REWARDED);
-        }
-
-        @Override
-        public void onComplete() {
-            dispatch_event(LuaConsts.COMPLETE, LuaConsts.REWARDED);
-        }
-
-        @Override
-        public void onClosed() {
-            dispatch_event(LuaConsts.CLOSED, LuaConsts.REWARDED);
         }
     };
     // endregion

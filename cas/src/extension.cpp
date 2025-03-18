@@ -10,10 +10,10 @@ static const luaL_reg lua_functions[] = {
 	{"show", EXTENSION_SHOW},
 	{"hide_banner", EXTENSION_HIDE_BANNER},
 	{"set", EXTENSION_SET},
-	{0, 0}
-};
+	{0, 0}};
 
-enum LUA_CONSTS {
+enum LUA_CONSTS
+{
 	BANNER,
 	INTERSTITIAL,
 	REWARDED,
@@ -26,6 +26,7 @@ enum LUA_CONSTS {
 	CLICKED,
 	COMPLETE,
 	CLOSED,
+	AD_REVENUE_PAID,
 
 	TAGGED_AUDIENCE,
 	AUDIENCE_CHILDREN,
@@ -51,18 +52,23 @@ enum LUA_CONSTS {
 	GENDER_FEMALE
 };
 
-dmExtension::Result APP_INITIALIZE(dmExtension::AppParams *params) {
+dmExtension::Result APP_INITIALIZE(dmExtension::AppParams *params)
+{
 	return dmExtension::RESULT_OK;
 }
 
-dmExtension::Result APP_FINALIZE(dmExtension::AppParams *params) {
+dmExtension::Result APP_FINALIZE(dmExtension::AppParams *params)
+{
 	return dmExtension::RESULT_OK;
 }
 
-dmExtension::Result INITIALIZE(dmExtension::Params *params) {
+dmExtension::Result INITIALIZE(dmExtension::Params *params)
+{
 	luaL_register(params->m_L, EXTENSION_NAME_STRING, lua_functions);
 
-	#define SET_FIELD(name) lua_pushnumber(params->m_L, name); lua_setfield(params->m_L, -2, #name);
+#define SET_FIELD(name)                \
+	lua_pushnumber(params->m_L, name); \
+	lua_setfield(params->m_L, -2, #name);
 
 	SET_FIELD(BANNER)
 	SET_FIELD(INTERSTITIAL)
@@ -76,6 +82,7 @@ dmExtension::Result INITIALIZE(dmExtension::Params *params) {
 	SET_FIELD(CLICKED)
 	SET_FIELD(COMPLETE)
 	SET_FIELD(CLOSED)
+	SET_FIELD(AD_REVENUE_PAID)
 
 	SET_FIELD(TAGGED_AUDIENCE)
 	SET_FIELD(AUDIENCE_CHILDREN)
@@ -100,30 +107,34 @@ dmExtension::Result INITIALIZE(dmExtension::Params *params) {
 	SET_FIELD(GENDER_MALE)
 	SET_FIELD(GENDER_FEMALE)
 
-	#undef SET_FIELD
+#undef SET_FIELD
 
 	lua_pop(params->m_L, 1);
 	EXTENSION_INITIALIZE(params->m_L);
 	return dmExtension::RESULT_OK;
 }
 
-dmExtension::Result UPDATE(dmExtension::Params *params) {
+dmExtension::Result UPDATE(dmExtension::Params *params)
+{
 	EXTENSION_UPDATE(params->m_L);
 	return dmExtension::RESULT_OK;
 }
 
-void EXTENSION_ON_EVENT(dmExtension::Params *params, const dmExtension::Event *event) {
-	switch (event->m_Event) {
-		case dmExtension::EVENT_ID_ACTIVATEAPP:
-			EXTENSION_APP_ACTIVATE(params->m_L);
-			break;
-		case dmExtension::EVENT_ID_DEACTIVATEAPP:
-			EXTENSION_APP_DEACTIVATE(params->m_L);
-			break;
+void EXTENSION_ON_EVENT(dmExtension::Params *params, const dmExtension::Event *event)
+{
+	switch (event->m_Event)
+	{
+	case dmExtension::EVENT_ID_ACTIVATEAPP:
+		EXTENSION_APP_ACTIVATE(params->m_L);
+		break;
+	case dmExtension::EVENT_ID_DEACTIVATEAPP:
+		EXTENSION_APP_DEACTIVATE(params->m_L);
+		break;
 	}
 }
 
-dmExtension::Result FINALIZE(dmExtension::Params *params) {
+dmExtension::Result FINALIZE(dmExtension::Params *params)
+{
 	EXTENSION_FINALIZE(params->m_L);
 	return dmExtension::RESULT_OK;
 }
