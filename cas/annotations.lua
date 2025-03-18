@@ -66,6 +66,7 @@ function cas.validate_integration() end
 function cas.load(type) end
 
 ---@param type cas.ad_type
+---@return boolean
 function cas.is_loaded(type) end
 
 ---@param type cas.ad_type
