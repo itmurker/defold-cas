@@ -34,13 +34,13 @@ repositories {
     } // SuperAwesome
     {{/cas.superawesome_android}}
 
-    {{#cas.charboost_android}}
+    {{#cas.chartboost_android}}
     maven {
         name = "ChartboostAdsRepo"
         url = "https://cboost.jfrog.io/artifactory/chartboost-ads/"
         content { it.includeGroup("com.chartboost") }
     } // Chartboost
-    {{/cas.charboost_android}}
+    {{/cas.chartboost_android}}
 
     // BETA
 
