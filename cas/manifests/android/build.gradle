@@ -104,7 +104,9 @@ dependencies {
     {{/cas.inmobi_android}}
     
     {{#cas.chartboost_android}}
-    implementation("com.cleveradssolutions:chartboost:9.8.3.0")   // Chartboost
+    implementation("com.cleveradssolutions:chartboost:9.8.3.0") {   // Chartboost
+        exclude group: "androidx.multidex", module: "multidex"
+    }
     {{/cas.chartboost_android}}
     
     {{#cas.fyber_android}}
